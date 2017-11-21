@@ -6,6 +6,7 @@ The team members are
 | Member          | Email           | Contribution  |
 | :-------------: |:-------------:| :-----:|
 | Joe Dinius      | <mailto:josephwdinius@gmail.com> | Team Lead, tbd |
+| Yan Zhao        | <mailto:zhaoyanthu@gmail.com>    | TBD            |
 
 ### Handy Docker Deployment (Recommended)
 See [this](https://github.com/bydavy/CarND-Capstone-Docker) for a really nice way of launching ROS with Docker.
