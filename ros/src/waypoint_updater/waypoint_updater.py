@@ -82,10 +82,10 @@ class WaypointUpdater(object):
         self.pose = msg.pose
 
         # get next waypoint index
-        self.next_wp_idx = self.get_next_waypoint()
+        self.next_wp_idx = self.get_next_waypoint_idx()
 
         # look forward to minimum of (LOOKAHEAD_WPS, size(base_wp))
-        end_idx = min(self.next_wp_idx + LOOKAHEAD_WPS - 1, len(base_wp))
+        end_idx = min(self.next_wp_idx + LOOKAHEAD_WPS - 1, len(self.base_wp))
         wp = self.base_wp[self.next_wp_idx : end_idx]
 
         self.final_wp = wp
@@ -95,7 +95,7 @@ class WaypointUpdater(object):
     def waypoints_cb(self, waypoints):
         # TODO: Implement
         # set waypoints
-        self.base_wp = waypoints 
+        self.base_wp = waypoints.waypoints 
 
     def traffic_cb(self, msg):
         # TODO: Callback for /traffic_waypoint message. Implement
