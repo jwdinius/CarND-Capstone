@@ -5,9 +5,12 @@ The team members are
 
 | Member          | Email           | Contribution  |
 | :-------------: |:-------------:| :-----:|
-| Joe Dinius      | <mailto:josephwdinius@gmail.com> | Team Lead, tbd |
-| Yan Zhao      | <mailto:zhaoyanthu@gmail.com> |  tbd |
-| Ignacio Martin  | <mailto:igmartinr@gmail.com> | tbd |
+| Joe Dinius      | <josephwdinius@gmail.com> | Team Lead, Waypoint Updater, Integration |
+| Yan Zhao        | <zhaoyanthu@gmail.com> | DBW, Test  |
+| Ignacio Martin  | <igmartinr@gmail.com> | Traffic Light Detector, Test |
+| Krunal Panchal  | <krunalcp@live.com> | Traffic Light Detector, Test |
+| Lijun Wang      | <wljjlu@163.com> | parts of each step |
+
 =======
 
 ### Handy Docker Deployment (Recommended)
