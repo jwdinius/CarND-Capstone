@@ -1,15 +1,15 @@
 This is the project repo for the final project of the Udacity Self-Driving Car Nanodegree: Programming a Real Self-Driving Car. For more information about the project, see the project introduction [here](https://classroom.udacity.com/nanodegrees/nd013/parts/6047fe34-d93c-4f50-8336-b70ef10cb4b2/modules/e1a23b06-329a-4684-a717-ad476f0d8dff/lessons/462c933d-9f24-42d3-8bdc-a08a5fc866e4/concepts/5ab4b122-83e6-436d-850f-9f4d26627fd9).
 
-### Team SDC4U&ME
+### Team No Place Like Home
 The team members are
 
 | Member          | Email           | Contribution  |
 | :-------------: |:-------------:| :-----:|
-| Joe Dinius      | <josephwdinius@gmail.com> | Team Lead, Waypoint Updater, Integration |
-| Yan Zhao        | <zhaoyanthu@gmail.com> | DBW, Test  |
-| Ignacio Martin  | <igmartinr@gmail.com> | Traffic Light Detector, Test |
-| Krunal Panchal  | <krunalcp@live.com> | Traffic Light Detector, Test |
-| Lijun Wang      | <wljjlu@163.com> | parts of each step |
+| Joe Dinius      | <josephwdinius@gmail.com> | TBD |
+| Can Cao         | <neo.caocan@gmail.com> | TBD  |
+| Ilya Matveev    | <ilya.manders@gmail.com> | TBD|
+| Kai Liu  | <kliu.gatech@gmail.com> | TBD |
+| J.P. Muralidhara   | <muralijp@gmail.com> | TBD |
 
 =======
 
