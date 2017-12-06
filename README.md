@@ -8,7 +8,7 @@ The team members are
 | Joe Dinius      | <josephwdinius@gmail.com> | TBD |
 | Can Cao         | <neo.caocan@gmail.com> | TBD  |
 | Ilya Matveev    | <ilya.manders@gmail.com> | TBD|
-| Kai Liu  | <kliu.gatech@gmail.com> | TBD |
+| Kai Liu  | <coolzai@gmail.com> | TBD |
 | J.P. Muralidhara   | <muralijp@gmail.com> | TBD |
 
 =======
