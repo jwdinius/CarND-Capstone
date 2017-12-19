@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
 import rospy
+import math
+import tf
 from geometry_msgs.msg import PoseStamped
 from styx_msgs.msg import Lane, Waypoint
-
-import math
+from std_msgs.msg import Int32
 
 '''
 This node will publish waypoints from the car's current position to some `x` distance ahead.
@@ -22,84 +23,45 @@ TODO (for Yousuf and Aaron): Stopline location for each traffic light.
 '''
 
 LOOKAHEAD_WPS = 200 # Number of waypoints we will publish. You can change this number
-# ADD OTHER GLOBALS HERE
-LARGE = 1.e10
-
-def euc_dist(x1,y1,x2,y2):
-	x = (x1-x2)
-	y = (y1-y2)
-	return math.sqrt(x*x+y*y)
-
+DEBUG_MODE = False
+MAX_DECEL = 0.5
+STOP_DIST = 5.0
+TARGET_SPEED_MPH = 25
 
 class WaypointUpdater(object):
     def __init__(self):
         rospy.init_node('waypoint_updater')
 
-        rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb) ## rosnode info /waypoint_updater displays this as having unknown type.  Why should this be?
-        rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb)
+        rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb, queue_size=1)
+        rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb, queue_size=1)
 
-        # TODO: Add a subscriber for /traffic_waypoint and /obstacle_waypoint below
-
+        # TODO: Add a subscriber for /traffic_waypoint and /obstacle_waypoint below        
+        rospy.Subscriber('/traffic_waypoint', Int32, self.traffic_cb, queue_size=1)
+        rospy.Subscriber('/obstacle_waypoint', Lane, self.obstacle_cb, queue_size=1)
 
         self.final_waypoints_pub = rospy.Publisher('final_waypoints', Lane, queue_size=1)
+        self.cur_pose = None
+        self.waypoints = None  
+        self.red_light_waypoint = None      
+        self.waypoints = None
 
-        # TODO: Add other member variables you need below
-        self.pose = None
-        self.base_wp = []
-        self.final_wp = []
-        self.next_wp_idx = 0
-        
         rospy.spin()
 
-    ## ADD PUBLISHER for final_wp
-    def publish(self):
-    	lane = Lane()
-    	#lane.header.frame_id = '' # this will need to be filled in
-    	lane.header.stamp = rospy.Time(0)
-    	lane.waypoints = self.final_wp
-    	self.final_waypoints_pub.publish(lane)
-
-    ## helpers
-    def get_next_waypoint_idx(self):
-    	pos_x = self.pose.position.x
-        pos_y = self.pose.position.y
-
-        # iterate over waypoints to find the next one (i.e. closest in front)
-        min_dist = LARGE
-        next_idx = 0
-        for idx in range(len(self.base_wp)):
-            wp_x = self.base_wp[idx].pose.pose.position.x
-            wp_y = self.base_wp[idx].pose.pose.position.y
-            if euc_dist(wp_x, wp_y, pos_x, pos_y) < min_dist:
-                min_dist = euc_dist(wp_x, wp_y, pos_x, pos_y)
-                next_idx = idx
-
-        return next_idx
-
-
     def pose_cb(self, msg):
-        # TODO: Implement
-        self.pose = msg.pose
+        self.cur_pose = msg.pose 
+        if self.waypoints is not None:                
+            self.publish()
 
-        # get next waypoint index
-        self.next_wp_idx = self.get_next_waypoint_idx()
-
-        # look forward to minimum of (LOOKAHEAD_WPS, size(base_wp))
-        end_idx = min(self.next_wp_idx + LOOKAHEAD_WPS - 1, len(self.base_wp))
-        wp = self.base_wp[self.next_wp_idx : end_idx]
-
-        self.final_wp = wp
-        self.publish()
-
-
-    def waypoints_cb(self, waypoints):
-        # TODO: Implement
-        # set waypoints
-        self.base_wp = waypoints.waypoints 
+    def waypoints_cb(self, lane):
+        # do this once and not all the time
+        if self.waypoints is None:
+            self.waypoints = lane.waypoints            
 
     def traffic_cb(self, msg):
-        # TODO: Callback for /traffic_waypoint message. Implement
-        pass
+        self.red_light_waypoint = msg.data        
+        rospy.loginfo("Detected light: " + str(msg.data))
+        if self.red_light_waypoint > -1:
+            self.publish()
 
     def obstacle_cb(self, msg):
         # TODO: Callback for /obstacle_waypoint message. We will implement it later
@@ -119,6 +81,40 @@ class WaypointUpdater(object):
             wp1 = i
         return dist
 
+    def distance(self, p1, p2):
+        x, y, z = p1.x - p2.x, p1.y - p2.y, p1.z - p2.z
+        return math.sqrt(x*x + y*y + z*z)
+    
+    def closest_waypoint(self, pose, waypoints):
+        # simply take the code from the path planning module and re-implement it here
+        closest_len = 100000
+        closest_waypoint = 0
+        dl = lambda a, b: math.sqrt((a.x-b.x)**2 + (a.y-b.y)**2)
+        for index, waypoint in enumerate(self.waypoints):
+            dist = dl(pose.position, waypoint.pose.pose.position)
+            if (dist < closest_len):
+                closest_len = dist
+                closest_waypoint = index
+                
+        return closest_waypoint 
+
+    def publish(self):
+        
+        if self.cur_pose is not None:
+            closest_waypoint_index = self.closest_waypoint(self.cur_pose, self.waypoints)
+            lookahead_waypoints = self.waypoints[closest_waypoint_index:closest_waypoint_index+LOOKAHEAD_WPS]
+
+             # set the velocity for lookahead waypoints
+            for i in range(len(lookahead_waypoints) - 1):                
+                # convert 10 miles per hour to meters per sec
+                self.set_waypoint_velocity(lookahead_waypoints, i, (TARGET_SPEED_MPH * 1609.34) / (60 * 60))
+
+            lane = Lane()
+            lane.header.frame_id = '/world'
+            lane.header.stamp = rospy.Time(0)
+            lane.waypoints = lookahead_waypoints
+            
+            self.final_waypoints_pub.publish(lane)
 
 if __name__ == '__main__':
     try:
