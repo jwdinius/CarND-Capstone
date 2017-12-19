@@ -19,6 +19,8 @@ class TLClassifier(object):
         # The trained tf model
         # MODEL_NAME = 'traffic_light_graph'
         MODEL_NAME = 'ssd_mobilenet_sim'
+        # MODEL_NAME = 'fast_rcnn_resnet101_sim'
+
         MODEL_NAME = os.path.join(dir_path, MODEL_NAME)
 
         # Path to frozen detection graph. This is the actual model that is used for the object detection.
@@ -88,7 +90,7 @@ class TLClassifier(object):
         """
         #TODO implement light color prediction
 
-        rospy.loginfo("Go classify")
+        # rospy.loginfo("Go classify")
 
         image_np = image
         # the array based representation of the image will be used later in order to prepare the
@@ -109,13 +111,17 @@ class TLClassifier(object):
         for i in range(boxes.shape[0]):
             if scores is None or scores[i] > min_score_thresh:
                 class_name = self.category_index[classes[i]]['name']
-                rospy.loginfo("%s, %f", class_name, scores[i])
+
+                if class_name == "Red":
+                    rospy.logwarn("%s, %f", class_name, scores[i])
+                else:
+                    rospy.loginfo("%s, %f", class_name, scores[i])
 
                 if class_name == 'Green':
                     return TrafficLight.GREEN
                 elif class_name == 'Red':
                     return TrafficLight.RED
-                elif class_name == 'Yellow':   
+                elif class_name == 'Yellow':
                     return TrafficLight.YELLOW
 
         # uint8 UNKNOWN=4
