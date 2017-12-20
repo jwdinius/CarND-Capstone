@@ -215,7 +215,7 @@ class TLDetector(object):
         #TODO find the closest visible traffic light (if one exists)
         if self.light:
             state = self.get_light_state(self.light)
-            rospy.loginfo("CLASSIFIER Light state near waypoint (%s) is (%s)", light_wp, state)
+            #rospy.loginfo("CLASSIFIER Light state near waypoint (%s) is (%s)", light_wp, state)
             return light_wp, state
 
 
