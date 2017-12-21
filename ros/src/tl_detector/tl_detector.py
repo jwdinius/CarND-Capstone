@@ -33,7 +33,7 @@ class TLDetector(object):
 
         self.light = None
         self.last_pose = None
-        self.last_light_wp = -1
+        self.last_light_wp = None
 
         sub1 = rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb, queue_size=STATE_COUNT_THRESHOLD)
         sub2 = rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb, queue_size=STATE_COUNT_THRESHOLD)
@@ -209,7 +209,7 @@ class TLDetector(object):
 
 
         # self.waypoints = None
-        return -1, TrafficLight.UNKNOWN
+        return None, TrafficLight.UNKNOWN
 
 if __name__ == '__main__':
     try:
