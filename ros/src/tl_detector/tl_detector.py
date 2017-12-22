@@ -15,7 +15,7 @@ import math
 STATE_COUNT_THRESHOLD = 3
 QUEUE_SIZE = 1
 LARGE = 1.e10
-
+LOOKAHEAD_WPS = 200
 
 def euc_dist(x1,y1,x2,y2):
     x = (x1-x2)
@@ -205,7 +205,7 @@ class TLDetector(object):
                 #     self.pose.pose.position, car_wp, light_wp)
 
                 # If the next traffic light is 100 waypoints ahead of current car position
-                self.light = light_wp - car_wp <= 100
+                self.light = light_wp - car_wp <= LOOKAHEAD_WPS
             else:
                 light_wp = self.last_light_wp
 

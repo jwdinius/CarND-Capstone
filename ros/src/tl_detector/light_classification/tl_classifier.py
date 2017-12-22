@@ -18,8 +18,8 @@ class TLClassifier(object):
 
         # The trained tf model
         # MODEL_NAME = 'traffic_light_graph'
-        MODEL_NAME = 'ssd_mobilenet_sim'
-        # MODEL_NAME = 'fast_rcnn_resnet101_sim'
+        # MODEL_NAME = 'ssd_mobilenet_sim'
+        MODEL_NAME = 'fast_rcnn_resnet101_sim'
 
         MODEL_NAME = os.path.join(dir_path, MODEL_NAME)
 
