@@ -133,6 +133,7 @@ class WaypointUpdater(object):
                 if distance_to_stopline <= MIN_DISTANCE:
                     ratio = 0.
                 self.queue_wp[index].twist.twist.linear.x = self.max_speed * ratio
+        rospy.loginfo("wp[{}] velocity={}".format(index,self.queue_wp[index].twist.twist.linear.x))
 
     def publish(self, wp_list):
         msg = Lane()
@@ -196,7 +197,8 @@ class WaypointUpdater(object):
 
     # The following callback is latched (called once)
     def waypoints_cb(self, waypoints):
-        self.base_wp = self.filterWaypoints(waypoints)
+        #self.base_wp = self.filterWaypoints(waypoints)
+        self.base_wp = waypoints.waypoints
         self.num_base_wp = len(self.base_wp)  # the number of points in the base list
         self.destination = self.num_base_wp - 1
         
