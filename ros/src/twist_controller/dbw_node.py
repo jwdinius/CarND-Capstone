@@ -76,9 +76,9 @@ class DBWNode(object):
         self.current_velocity = None
         self.dbw_enabled      = False
         
-        rospy.Subscriber('/twist_cmd', TwistStamped, self.callback_twist_cmd)
-        rospy.Subscriber('/current_velocity', TwistStamped, self.callback_current_velocity)
-        rospy.Subscriber('/vehicle/dbw_enabled', Bool, self.callback_dbw_enabled)
+        rospy.Subscriber('/twist_cmd', TwistStamped, self.callback_twist_cmd, queue_size=1)
+        rospy.Subscriber('/current_velocity', TwistStamped, self.callback_current_velocity, queue_size=1)
+        rospy.Subscriber('/vehicle/dbw_enabled', Bool, self.callback_dbw_enabled, queue_size=1)
         
         self.loop()
 
@@ -91,13 +91,13 @@ class DBWNode(object):
                 linear_target  = self.current_command.twist.linear.x;
                 angular_target = self.current_command.twist.angular.z;
                 linear_current = self.current_velocity.twist.linear.x;
-                angular_current = self.current_velocity.twist.angular.z;
-                #rospy.loginfo("linearc: %.2f, lineart: %.2f, angularc: %.2f, angulart: %.2f", linear_current, linear_target, angular_current, angular_target)
+#                angular_current = self.current_velocity.twist.angular.z;
+#                rospy.loginfo("linearc: %.2f, lineart: %.2f, angulart: %.2f", linear_current, linear_target, angular_target)
                 throttle, brake, steering = self.controller.control(linear_target, angular_target, linear_current)
                 
                 # publish the control commands if dbw is enabled
                 if self.dbw_enabled is True:
-                    #rospy.loginfo("v: %.2f, vtarg: %.2f, thr: %.2f, b: %.2f, s: %.2f", linear_current, linear_target, throttle, brake, steering)
+                    rospy.loginfo("v: %.2f, vtarg: %.2f, thr: %.2f, b: %.2f, s: %.2f", linear_current, linear_target, throttle, brake, steering)
                     self.publish(throttle, brake, steering)
                 else:
                     self.controller.reset()

@@ -21,6 +21,7 @@ class Controller(object):
         self.yawController = YawController(wheel_base, self.steer_ratio, min_velocity, max_lat_accel, max_steer_angle)
         self.velocity_pid = PID(0.5, 0., 0., self.decel_limit, self.accel_limit)
         self.lowpassFilt = LowPassFilter(0.07, 0.02)
+        self.steer_filter = LowPassFilter(0.2,0.1)
         self.topVelocity = 0.
 
     def control(self, linear_velocity_target, angular_velocity_target, linear_velocity_current):
@@ -47,6 +48,8 @@ class Controller(object):
                 self.topVelocity = linear_velocity_target
             if linear_velocity_current > 0.05:
                 steering = self.yawController.get_steering(self.topVelocity, angular_velocity_target, linear_velocity_current)
+                # filter steering and add coefficient for better waypoint following
+                steering = 2.0*self.steer_filter.filt(steering)
             else:
                 steering = 0.
         # ...and alternate approach (to match reference) on the test site:
