@@ -17,9 +17,16 @@ class TLClassifier(object):
         dir_path = os.path.dirname(os.path.realpath(__file__))
 
         # The trained tf model
-        # MODEL_NAME = 'traffic_light_graph'
-        MODEL_NAME = 'ssd_mobilenet_sim'
-        MODEL_NAME = os.path.join(dir_path, MODEL_NAME)
+        self.sim_mode = True
+        self.real_mode = False
+        
+        if self.sim_mode is True:
+            MODEL = 'ssd_mobilenet_sim'
+            
+        if self.real_mode is True:
+            MODEL = 'ssd_mobilenet_real'
+            
+        MODEL_NAME = os.path.join(dir_path, MODEL)
 
         # Path to frozen detection graph. This is the actual model that is used for the object detection.
         PATH_TO_CKPT = MODEL_NAME + '/frozen_inference_graph.pb'
