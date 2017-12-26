@@ -15,7 +15,7 @@ import math
 STATE_COUNT_THRESHOLD = 3
 QUEUE_SIZE = 1
 LARGE = 1.e10
-LOOKAHEAD_WPS = 200
+LOOKAHEAD_WPS = 100
 
 def euc_dist(x1,y1,x2,y2):
     x = (x1-x2)
