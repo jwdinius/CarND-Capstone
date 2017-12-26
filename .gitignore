@@ -5,4 +5,4 @@ devel
 
 profile.tmp
 .DS_Store
-ros/src/tl_detector/light_classification/fast_rcnn_resnet101_sim/frozen_inference_graph.pb
+ros/src/tl_detector/light_classification/frozen_models/*.pb
