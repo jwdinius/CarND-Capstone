@@ -5,4 +5,5 @@ devel
 
 profile.tmp
 .DS_Store
-ros/src/tl_detector/light_classification/frozen_models/*.pb
+
+*.pb
