@@ -13,8 +13,9 @@ import yaml
 import math
 
 STATE_COUNT_THRESHOLD = 3
+QUEUE_SIZE = 1
 LARGE = 1.e10
-
+LOOKAHEAD_WPS = 100
 
 def euc_dist(x1,y1,x2,y2):
     x = (x1-x2)
@@ -35,8 +36,8 @@ class TLDetector(object):
         self.last_pose = None
         self.last_light_wp = None
 
-        sub1 = rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb, queue_size=STATE_COUNT_THRESHOLD)
-        sub2 = rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb, queue_size=STATE_COUNT_THRESHOLD)
+        sub1 = rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb, queue_size=QUEUE_SIZE)
+        sub2 = rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb, queue_size=QUEUE_SIZE)
 
         '''
         /vehicle/traffic_lights provides you with the location of the traffic light in 3D map space and
@@ -45,8 +46,8 @@ class TLDetector(object):
         simulator. When testing on the vehicle, the color state will not be available. You'll need to
         rely on the position of the light and the camera image to predict it.
         '''
-        sub3 = rospy.Subscriber('/vehicle/traffic_lights', TrafficLightArray, self.traffic_cb, queue_size=STATE_COUNT_THRESHOLD)
-        sub6 = rospy.Subscriber('/image_color', Image, self.image_cb, queue_size=STATE_COUNT_THRESHOLD)
+        sub3 = rospy.Subscriber('/vehicle/traffic_lights', TrafficLightArray, self.traffic_cb, queue_size=QUEUE_SIZE)
+        sub6 = rospy.Subscriber('/image_color', Image, self.image_cb, queue_size=QUEUE_SIZE)
 
         config_string = rospy.get_param("/traffic_light_config")
         self.config = yaml.load(config_string)
@@ -149,7 +150,7 @@ class TLDetector(object):
                 min_idx = light_wp
 
         return min_idx
-    
+
 
     def get_light_state(self, light):
         """Determines the current color of the traffic light
@@ -181,6 +182,16 @@ class TLDetector(object):
 
         """
 
+        # img_time = self.camera_image.header.stamp
+        # img_age = rospy.Time.now() - img_time
+        # rospy.loginfo('(%s), (%s)', rospy.Time.now().secs, self.camera_image.header.stamp.secs)
+
+        #if (img_age.secs > 0.2):
+            # pass
+            # rospy.loginfo('Image age (%s) is greater than threhsold (%s)', img_age.secs, 0.2)
+            # return -1, TrafficLight.UNKNOWN
+
+
         # List of positions that correspond to the line to stop in front of for a given intersection
         stop_line_positions = self.config['stop_line_positions']
 
@@ -190,11 +201,11 @@ class TLDetector(object):
                 car_wp = self.get_closest_waypoint(self.pose.pose)
                 light_wp = self.get_closest_light(car_wp, stop_line_positions)
 
-                # rospy.loginfo("Car position: (%s) Closest waypoint idx: (%s) Closest light waypoint idx: (%s)", 
+                # rospy.loginfo("Car position: (%s) Closest waypoint idx: (%s) Closest light waypoint idx: (%s)",
                 #     self.pose.pose.position, car_wp, light_wp)
 
                 # If the next traffic light is 100 waypoints ahead of current car position
-                self.light = light_wp - car_wp <= 100
+                self.light = light_wp - car_wp <= LOOKAHEAD_WPS
             else:
                 light_wp = self.last_light_wp
 

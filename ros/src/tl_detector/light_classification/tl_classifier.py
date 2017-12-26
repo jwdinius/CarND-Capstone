@@ -10,15 +10,24 @@ from utilities import label_map_util
 
 class TLClassifier(object):
     def __init__(self):
+        self.on_sim = True      # True to run on simulator. False to run on Carla
         self.load_graph()
 
 
     def load_graph(self):
         dir_path = os.path.dirname(os.path.realpath(__file__))
+        dir_path = os.path.join(dir_path, 'frozen_models')
 
         # The trained tf model
-        # MODEL_NAME = 'traffic_light_graph'
-        MODEL_NAME = 'ssd_mobilenet_sim'
+
+        # Accurate
+        MODEL_NAME = 'frozen_resnet101'
+
+        # Fast
+        # MODEL_NAME = 'frozen_ssd_mobilenet'
+
+        MODEL_NAME += ('_sim' if self.on_sim else '_real')
+        print("load model {}".format(MODEL_NAME))
         MODEL_NAME = os.path.join(dir_path, MODEL_NAME)
 
         # Path to frozen detection graph. This is the actual model that is used for the object detection.
@@ -88,7 +97,7 @@ class TLClassifier(object):
         """
         #TODO implement light color prediction
 
-        rospy.loginfo("Go classify")
+        # rospy.loginfo("Go classify")
 
         image_np = image
         # the array based representation of the image will be used later in order to prepare the
@@ -105,7 +114,7 @@ class TLClassifier(object):
         scores = np.squeeze(scores)
         classes = np.squeeze(classes).astype(np.int32)
 
-        min_score_thresh = 0.05
+        min_score_thresh = 0.55
         for i in range(boxes.shape[0]):
             if scores is None or scores[i] > min_score_thresh:
                 class_name = self.category_index[classes[i]]['name']
@@ -115,7 +124,7 @@ class TLClassifier(object):
                     return TrafficLight.GREEN
                 elif class_name == 'Red':
                     return TrafficLight.RED
-                elif class_name == 'Yellow':   
+                elif class_name == 'Yellow':
                     return TrafficLight.YELLOW
 
         # uint8 UNKNOWN=4
