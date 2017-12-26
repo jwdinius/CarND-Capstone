@@ -2,6 +2,8 @@
 
 import socketio
 import eventlet
+eventlet.monkey_patch(socket=True, select=True, time=True)
+
 import eventlet.wsgi
 import time
 from flask import Flask, render_template
