@@ -56,7 +56,7 @@ class TLDetector(object):
 
         self.bridge = CvBridge()
 
-        self.on_sim = False if rospy.get_param('~on_sim') == 1 else True
+        self.on_sim = True if rospy.get_param('~on_sim') == 1 else False
         self.light_classifier = TLClassifier(self.on_sim)
         self.listener = tf.TransformListener()
 
