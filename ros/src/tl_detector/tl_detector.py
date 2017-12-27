@@ -55,7 +55,9 @@ class TLDetector(object):
         self.upcoming_red_light_pub = rospy.Publisher('/traffic_waypoint', Int32, queue_size=1)
 
         self.bridge = CvBridge()
-        self.light_classifier = TLClassifier()
+
+        self.on_sim = False if rospy.get_param('~on_sim') == 1 else True
+        self.light_classifier = TLClassifier(self.on_sim)
         self.listener = tf.TransformListener()
 
         self.state = TrafficLight.UNKNOWN

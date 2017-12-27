@@ -9,8 +9,8 @@ from utilities import label_map_util
 
 
 class TLClassifier(object):
-    def __init__(self):
-        self.on_sim = True      # True to run on simulator. False to run on Carla
+    def __init__(self, on_sim=True):
+        self.on_sim = on_sim     # True to run on simulator. False to run on Carla
         self.load_graph()
 
 
