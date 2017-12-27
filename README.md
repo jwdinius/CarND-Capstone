@@ -5,11 +5,11 @@ The team members are
 
 | Member          | Email           | Contribution  |
 | :-------------: |:-------------:| :-----:|
-| Joe Dinius      | <josephwdinius@gmail.com> | TBD |
-| Can Cao         | <neo.caocan@gmail.com> | TBD  |
-| Ilya Matveev    | <ilya.manders@gmail.com> | TBD|
-| Kai Liu  | <coolzai@gmail.com> | TBD |
-| J.P. Muralidhara   | <muralijp@gmail.com> | TBD |
+| Joe Dinius      | <josephwdinius@gmail.com> | Team Leader, Waypoint Updater |
+| Can Cao         | <neo.caocan@gmail.com> | Drive-By-Wire  |
+| Ilya Matveev    | <ilya.manders@gmail.com> | Traffic Light Detection + Classification |
+| Kai Liu  | <coolzai@gmail.com> | Traffic Light Detection + Classification|
+| J.P. Muralidhara   | <muralijp@gmail.com> | Integration |
 
 =======
 
