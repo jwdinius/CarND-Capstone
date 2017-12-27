@@ -11,6 +11,7 @@ from utilities import label_map_util
 class TLClassifier(object):
     def __init__(self, on_sim=True):
         self.on_sim = on_sim     # True to run on simulator. False to run on Carla
+        self.prob_threshold = 0.65  # TL probability threshold
         self.load_graph()
 
 
@@ -27,7 +28,6 @@ class TLClassifier(object):
         # MODEL_NAME = 'frozen_ssd_mobilenet'
 
         MODEL_NAME += ('_sim' if self.on_sim else '_real')
-        print("load model {}".format(MODEL_NAME))
         MODEL_NAME = os.path.join(dir_path, MODEL_NAME)
 
         # Path to frozen detection graph. This is the actual model that is used for the object detection.
@@ -54,11 +54,11 @@ class TLClassifier(object):
         # categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=NUM_CLASSES, use_display_name=True)
         # category_index = label_map_util.create_category_index(categories)
 
-        category_index = {}
-        category_index[1] = {'id': 1, 'name': TrafficLight.GREEN, 'description': 'Green'}
-        category_index[2] = {'id': 2, 'name': TrafficLight.RED, 'description': 'Red'}
-        category_index[3] = {'id': 3, 'name': TrafficLight.YELLOW, 'description': 'Yellow'}
-        category_index[4] = {'id': 4, 'name': TrafficLight.UNKNOWN, 'description': 'off'}
+        # category_index = {
+        # category_index[1] = {'id': 1, 'name': TrafficLight.GREEN, 'description': 'Green'}
+        # category_index[2] = {'id': 2, 'name': TrafficLight.RED, 'description': 'Red'}
+        # category_index[3] = {'id': 3, 'name': TrafficLight.YELLOW, 'description': 'Yellow'}
+        # category_index[4] = {'id': 4, 'name': TrafficLight.UNKNOWN, 'description': 'off'}}
 
 
         label_map = label_map_util.load_labelmap(PATH_TO_LABELS)
@@ -67,6 +67,7 @@ class TLClassifier(object):
         self.category_index = label_map_util.create_category_index(categories)
         rospy.loginfo('%s', self.category_index)
 
+        rospy.loginfo('Loaded model: %s', PATH_TO_CKPT)
 
         with detection_graph.as_default():
             # Definite input and output Tensors for detection_graph
@@ -114,7 +115,7 @@ class TLClassifier(object):
         scores = np.squeeze(scores)
         classes = np.squeeze(classes).astype(np.int32)
 
-        min_score_thresh = 0.55
+        min_score_thresh = self.prob_threshold
         for i in range(boxes.shape[0]):
             if scores is None or scores[i] > min_score_thresh:
                 class_name = self.category_index[classes[i]]['name']
